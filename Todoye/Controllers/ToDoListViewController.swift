@@ -9,29 +9,19 @@
 import UIKit
 
 class ToDoListViewController: UITableViewController{
-
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("List.Plist")
+    
     var itemsArray = [Item]()
-    let userdefault = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.title = "Georgi"
-        itemsArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Ika"
-        itemsArray.append(newItem2)
         
         
-        let newItem3 = Item()
-        newItem3.title = "Adam"
-        itemsArray.append(newItem3)
+        print(dataFilePath!)
         
+    
         
-        if let name = userdefault.array(forKey: "ToDoListArray") as? [Item]{
-            itemsArray  = name
-        }
+        loadItem()
 
     }
     @IBAction func addButtonPresed(_ sender: UIBarButtonItem) {
@@ -42,7 +32,8 @@ class ToDoListViewController: UITableViewController{
             newMyItem.title = myTextFild.text!
             self.itemsArray.append(newMyItem)
             
-            self.userdefault.set(self.itemsArray, forKey: "ToDoListArray")
+
+            self.saveItem()
             self.tableView.reloadData()
         }
         alert.addTextField { (alertTextFild) in
@@ -71,6 +62,29 @@ class ToDoListViewController: UITableViewController{
         
         tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func saveItem() {
+        let ecoder = PropertyListEncoder()
+        
+        do{
+            let data = try? ecoder.encode(itemsArray)
+            try data?.write(to: dataFilePath! )
+        }catch{
+            print("save items eror \(error)")
+        }
+    }
+    
+    func loadItem() {
+        if let data = try? Data.init(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do{
+            itemsArray = try decoder.decode([Item].self, from: data)
+            }catch{
+                print("error")
+            }
+        }
+        
     }
 
 }
