@@ -11,9 +11,14 @@ import UIKit
 class ToDoListViewController: UITableViewController{
 
     var itemsArray = ["Georgi","Iskuhi"]
-    
+    let userdefault = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        if let name = userdefault.array(forKey: "ToDoListArray") as? [String]{
+            itemsArray  = name
+        }
        
     }
     @IBAction func addButtonPresed(_ sender: UIBarButtonItem) {
@@ -21,6 +26,8 @@ class ToDoListViewController: UITableViewController{
         let alert = UIAlertController(title: "Enter new Todoye Item", message: nil, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default) { (action) in
             self.itemsArray.append(myTextFild.text!)
+            
+            self.userdefault.set(self.itemsArray, forKey: "ToDoListArray")
             self.tableView.reloadData()
         }
         alert.addTextField { (alertTextFild) in
