@@ -16,7 +16,21 @@ class ToDoListViewController: UITableViewController{
         super.viewDidLoad()
        
     }
-
+    @IBAction func addButtonPresed(_ sender: UIBarButtonItem) {
+        var myTextFild = UITextField()
+        let alert = UIAlertController(title: "Enter new Todoye Item", message: nil, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default) { (action) in
+            self.itemsArray.append(myTextFild.text!)
+            self.tableView.reloadData()
+        }
+        alert.addTextField { (alertTextFild) in
+            myTextFild = alertTextFild
+            alertTextFild.placeholder = "Enter items"
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemsArray.count
     }
