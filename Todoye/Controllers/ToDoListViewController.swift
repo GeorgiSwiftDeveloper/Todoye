@@ -10,22 +10,37 @@ import UIKit
 
 class ToDoListViewController: UITableViewController{
 
-    var itemsArray = ["Georgi","Iskuhi"]
+    var itemsArray = [Item]()
     let userdefault = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let newItem = Item()
+        newItem.title = "Georgi"
+        itemsArray.append(newItem)
         
-        if let name = userdefault.array(forKey: "ToDoListArray") as? [String]{
+        let newItem2 = Item()
+        newItem2.title = "Ika"
+        itemsArray.append(newItem2)
+        
+        
+        let newItem3 = Item()
+        newItem3.title = "Adam"
+        itemsArray.append(newItem3)
+        
+        
+        if let name = userdefault.array(forKey: "ToDoListArray") as? [Item]{
             itemsArray  = name
         }
-       
+
     }
     @IBAction func addButtonPresed(_ sender: UIBarButtonItem) {
         var myTextFild = UITextField()
         let alert = UIAlertController(title: "Enter new Todoye Item", message: nil, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default) { (action) in
-            self.itemsArray.append(myTextFild.text!)
+            let newMyItem = Item()
+            newMyItem.title = myTextFild.text!
+            self.itemsArray.append(newMyItem)
             
             self.userdefault.set(self.itemsArray, forKey: "ToDoListArray")
             self.tableView.reloadData()
@@ -44,17 +59,17 @@ class ToDoListViewController: UITableViewController{
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell  = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
-        cell.textLabel?.text = itemsArray[indexPath.row]
+      
+        let items = itemsArray[indexPath.row]
+        cell.textLabel?.text = items.title
+        cell.accessoryType = items.done ? .checkmark : .none
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-       if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-       }else {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemsArray[indexPath.row].done = !itemsArray[indexPath.row].done
         
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
