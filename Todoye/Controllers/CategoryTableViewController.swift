@@ -9,82 +9,78 @@
 import UIKit
 import CoreData
 
+
+
 class CategoryTableViewController: UITableViewController {
+    var categorys = [Category]()
+ let contex = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+ 
     
-    
-    let contex = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-    
-    
-    
-    var categoryItems = [Category]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadCategory()
+        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        loadCategrys()
     }
 
 
     @IBAction func addButtonPresed(_ sender: UIBarButtonItem) {
-        var myTextFild = UITextField()
-        
-        let alert = UIAlertController(title: "Add new table name", message: nil, preferredStyle: .alert)
-        let actionone = UIAlertAction(title: "OK", style: .default) { (action) in
-            let newItem = Category(context: self.contex!)
-            newItem.name = myTextFild.text!
-            self.categoryItems.append(newItem)
-            self.saveCategory()
+        var messageText = UITextField()
+     let alert = UIAlertController(title: "add text", message: nil, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default) { (action) in
+            let newCategory = Category(context: self.contex!)
+            newCategory.name = messageText.text!
+            self.categorys.append(newCategory)
             self.tableView.reloadData()
+            
+            self.saveCategory()
         }
-        alert.addTextField { (textFild) in
-            textFild.placeholder = "Enter new name"
-            myTextFild = textFild
+        alert.addTextField { (textfild) in
+            messageText = textfild
+            messageText.placeholder = "Add item"
         }
-        alert.addAction(actionone)
+        alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryItems.count
+        return  categorys.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.textLabel?.text = categoryItems[indexPath.row].name
+        cell.textLabel?.text = categorys[indexPath.row].name
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         performSegue(withIdentifier: "goToItems", sender: self)
-        
-        
     }
-   
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destination = segue.destination as! ToDoListViewController
+        let destinationVC = segue.destination as! ToDoListViewController
         
-        if  let indexPath = tableView.indexPathForSelectedRow {
-            destination.selectedCategory = categoryItems[indexPath.row]
+        if let indexPath = tableView.indexPathForSelectedRow {
+            destinationVC.selectedCategory = categorys[indexPath.row]
         }
     }
-    
     
     func saveCategory() {
         do{
             try contex?.save()
         }catch{
-            print("Error  save items \(error)")
+            print("Error to save categorys")
         }
     }
     
-    func loadCategory() {
+    func loadCategrys() {
         let request : NSFetchRequest<Category> = Category.fetchRequest()
         do{
-            categoryItems = try (contex?.fetch(request))!
+            categorys = try (contex?.fetch(request))!
         }catch{
-            print("Error load items \(error)")
+            
         }
-        tableView.reloadData()
     }
+
 }

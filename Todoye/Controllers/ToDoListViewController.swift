@@ -41,7 +41,7 @@ class ToDoListViewController: UITableViewController{
             newMyItem.done = false
             newMyItem.parentCategory = self.selectedCategory
             self.itemsArray.append(newMyItem)
-            
+            self.saveItem()
 
             self.tableView.reloadData()
         }
@@ -67,10 +67,14 @@ class ToDoListViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        
+//        context?.delete(itemsArray[indexPath.row])
+//        itemsArray.remove(at: indexPath.row)
         itemsArray[indexPath.row].done = !itemsArray[indexPath.row].done
         self.saveItem()
-        tableView.reloadData()
+       
         tableView.deselectRow(at: indexPath, animated: true)
+        tableView.reloadData()
     }
     
     func saveItem() {
@@ -82,10 +86,17 @@ class ToDoListViewController: UITableViewController{
         self.tableView.reloadData()
     }
     
-    func loadItem() {
+    func loadItem(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
-        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", (selectedCategory?.name)!)
-        request.predicate = predicate
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", (selectedCategory!.name)!)
+        if let additionaPredicate = predicate{
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionaPredicate])
+        }else{
+            request.predicate = categoryPredicate
+        }
+        
+        
+        
         do{
             itemsArray = (try context?.fetch(request))!
         }catch{
@@ -98,16 +109,11 @@ class ToDoListViewController: UITableViewController{
 //MARK: - Search bar methods
 extension ToDoListViewController: UISearchBarDelegate {
    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAIN %@", searchBar.text!)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        do{
-            itemsArray = (try context?.fetch(request))!
-        }catch{
-            print("EROR\(error)")
-        }
-        tableView.reloadData()
+        loadItem(with: request, predicate: predicate)
     }
     
     
@@ -116,8 +122,6 @@ extension ToDoListViewController: UISearchBarDelegate {
             loadItem()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
-
-    
             }
         }
     }

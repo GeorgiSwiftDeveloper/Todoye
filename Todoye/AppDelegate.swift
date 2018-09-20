@@ -8,6 +8,9 @@
 
 import UIKit
 import CoreData
+
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -15,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-       
+    
         return true
     }
 
@@ -28,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     lazy var persistentContainer: NSPersistentContainer = {
         
-        let container = NSPersistentContainer(name: "DataModel")
+        let container = NSPersistentContainer(name: "Data")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 
