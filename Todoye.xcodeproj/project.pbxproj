@@ -163,6 +163,7 @@
 				TargetAttributes = {
 					6AB1E4482143A619002E1243 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -401,7 +402,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Georgi.Todoye;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -420,7 +421,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Georgi.Todoye;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
